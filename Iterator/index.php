@@ -28,15 +28,20 @@ class Book {
 class BookShelf implements Aggregate {
     private $books;
     private $last = 0;
+    
     public function __construct($maxsize) {
-        $this->books = new ArrayObject();
+        $this->books = new SplFixedArray($maxsize);
     }
     public function getBookAt($index) {
         return $this->books[$index];
     }
     public function appendBook(Book $book) {
-        $this->books->append($book);
-        $this->last++;
+        try {
+            $this->books[$this->last] = $book;
+            $this->last++;
+        } catch(Exception $e) {
+            echo "本棚が一杯で[".$book->getName()."]を追加できませんでした。"."<br>";
+        }
     }
     public function getLength() {
         return $this->last;
@@ -49,7 +54,6 @@ class BookShelf implements Aggregate {
 class BookShelfIterator implements MyIterator {
     private $bookshelf;
     private $index;
-    private $maxsize;
     
     public function __construct(BookShelf $bookShelf) {
         $this->bookshelf = $bookShelf;
@@ -78,7 +82,6 @@ class Main {
         $bookShelf->appendBook(new Book("aaaa"));
         $bookShelf->appendBook(new Book("bbbb"));
         $bookShelf->appendBook(new Book("cccc"));
-        $bookShelf->appendBook(new Book("dddd"));
         $bookShelf->appendBook(new Book("dddd"));
         $bookShelf->appendBook(new Book("eeee"));
         $bookShelf->appendBook(new Book("ffff"));
