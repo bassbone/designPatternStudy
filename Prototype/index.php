@@ -6,9 +6,17 @@
  * and open the template in the editor.
  */
 
-interface Product {
-    public function my_use($s);
-    public function createClone();
+abstract class Product {
+    abstract function my_use($s);
+    public function createClone() {
+        $p = null;
+        try {
+            $p = clone $this;
+        } catch (Exception $ex) {
+            echo $ex->getMessage();
+        }
+        return $p;
+    }
 }
 
 class Manager {
@@ -22,7 +30,7 @@ class Manager {
     } 
 }
 
-class MessageBox implements Product {
+class MessageBox extends Product {
     private $decochar;
     function __construct($decochar) {
         $this->decochar = $decochar;
@@ -39,30 +47,12 @@ class MessageBox implements Product {
         }
         echo "<br>";
     }
-    public function createClone() {
-        $p = null;
-        try {
-            $p = clone $this;
-        } catch (Exception $ex) {
-            echo $ex->getMessage();
-        }
-        return $p;
-    }
 }
 
-class UnderlinePen implements Product {
+class UnderlinePen extends Product {
     private $ulchar;
     function __construct($ulchar) {
         $this->ulchar = $ulchar;
-    }
-    public function createClone() {
-        $p = null;
-        try {
-            $p = clone $this;
-        } catch (Exception $ex) {
-            $ex->getMessage();
-        }
-        return $p;
     }
     public function my_use($s) {
         $length = strlen($s);
