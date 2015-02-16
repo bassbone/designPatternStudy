@@ -28,7 +28,7 @@ class Director {
     }
 }
 
-class TextBuiler extends Builder {
+class TextBuilder extends Builder {
     private $buffer = array();
     public function close() {
         $this->buffer[] = "================================="."<br>";
@@ -57,7 +57,7 @@ class TextBuiler extends Builder {
     }
 }
 
-class HTMLBuilder extends Builder {
+class HtmlBuilder extends Builder {
     private $result = "";
     
     public function close() {
@@ -92,18 +92,15 @@ class Main {
         
     }
     public static function main($mode) {
-        if ($mode === "plain") {
-            $textbuilder = new TextBuiler();
-            $director = new Director($textbuilder);
-            $director->construct();
-            $result = $textbuilder->getResult();
-            echo $result;
-        } elseif ($mode === "html") {
-            $htmlbuilder = new HTMLBuilder();
-            $director = new Director($htmlbuilder);
-            $director->construct();
-            $result = $htmlbuilder->getResult();
-            echo $result;
+        if ($mode == "Text" || $mode == "Html") {
+            $classname = $mode."Builder";
+            if (class_exists($classname)) {
+                $builder = new $classname();
+                $director = new Director($builder);
+                $director->construct();
+                $result = $builder->getResult();
+                echo $result;
+           }
         } else {
             self::usage();
             exit(0);
@@ -114,6 +111,6 @@ class Main {
     }
 }
 
-Main::main("plain");
-Main::main("html");
+Main::main("Text");
+Main::main("Html");
 
