@@ -7,10 +7,30 @@
  */
 
 abstract class Builder {
-    abstract public function makeTitle($title);
-    abstract public function makeString($str);
-    abstract public function makeItems($items);
-    abstract public function close();
+    private $make_title_flag = false;
+    public function makeTitle($title) {
+        $this->buildTitle($title);
+        $this->make_title_flag = true;
+    }
+    public function makeString($str) {
+        if($this->make_title_flag) {
+            $this->buildString($str);
+        }
+    }
+    public function makeItems($items) {
+        if($this->make_title_flag) {
+            $this->buildItems($items);
+        }
+    }
+    public function close() {
+        if($this->make_title_flag) {
+            $this->buildClose();
+        }
+    }
+    abstract protected function buildTitle($title);
+    abstract protected function buildString($str);
+    abstract protected function buildItems($items);
+    abstract protected function buildClose();
 }
 
 class Director {
@@ -30,23 +50,23 @@ class Director {
 
 class TextBuilder extends Builder {
     private $buffer = array();
-    public function close() {
+    public function buildClose() {
         $this->buffer[] = "================================="."<br>";
     }
 
-    public function makeItems($items) {
+    public function buildItems($items) {
         for ($i = 0; $i < count($items); $i++) {
             $this->buffer[] = "  ・".$items[$i]."<br>";
         }
         $this->buffer[] = "<br>";
     }
 
-    public function makeString($str) {
+    public function buildString($str) {
         $this->buffer[] = "■".$str."<br>";
         $this->buffer[] = "<br>";
     }
 
-    public function makeTitle($title) {
+    public function buildTitle($title) {
         $this->buffer[] = "================================="."<br>";
         $this->buffer[] = "「".$title."」"."<br>";
         $this->buffer[] = "<br>";
@@ -60,11 +80,11 @@ class TextBuilder extends Builder {
 class HtmlBuilder extends Builder {
     private $result = "";
     
-    public function close() {
+    public function buildClose() {
         $this->result .= "</body></html>";
     }
 
-    public function makeItems($items) {
+    public function buildItems($items) {
         $this->result .= "<ul>";
         for ($i = 0; $i < count($items); $i++) {
             $this->result .= "<li>".$items[$i]."</li>";
@@ -72,11 +92,11 @@ class HtmlBuilder extends Builder {
         $this->result .= "</ul>";
     }
 
-    public function makeString($str) {
+    public function buildString($str) {
         $this->result .= "<p>".$str."</p>";
     }
 
-    public function makeTitle($title) {
+    public function buildTitle($title) {
         $this->result .= "<html><head><title>".$title."</title></head><body>";
         $this->result .= "<h1>".$title."</h1>";
     }
