@@ -101,7 +101,7 @@ class Main {
     }
 }
 
-Main::main("ListFactory");
+Main::main("TableFactory");
 
 class ListFactory extends Factory {
     public function createLink($caption, $url) {
@@ -168,3 +168,69 @@ class ListPage extends Page {
     }
 }
 
+class TableFactory extends Factory {
+    public function createLink($caption, $url) {
+        return new TableLink($caption, $url);
+    }
+    public function createTray($caption) {
+        return new TableTray($caption);
+    }
+    public function createPage($title, $author) {
+        return new TablePage($title, $author);
+    }
+}
+
+class TableLink extends Link {
+    function __construct($caption, $url) {
+        parent::__construct($caption, $url);
+    }
+    public function makeHTML() {
+        return "<td><a href=\"".$this->url."\">".$this->caption."</a></td>\n";
+    }
+}
+
+class TableTray extends Tray {
+    function __construct($caption) {
+        parent::__construct($caption);
+    }
+    public function makeHTML() {
+        $buffer = array();
+        $buffer[] = "<td>";
+        $buffer[] = "<table width=\"100%\" border=\"1\"><tr>";
+        $buffer[] = "<td bgcolor=\"#cccccc\" align=\"center\" colspan=\"".count($this->tray)."\"><b>".$this->caption."</b></td>";
+        $buffer[] = "</tr>\n";
+        $buffer[] = "<tr>\n";
+        $it = new ArrayIterator($this->tray);
+        while ($it->valid()) {
+            $item = $it->current();
+            $buffer[] = $item->makeHTML();
+            $it->next();
+        }
+        $buffer[] = "</tr></table>";
+        $buffer[] = "</td>";
+        return implode("", $buffer);
+    }
+}
+
+class TablePage extends Page {
+    function __construct($title, $author) {
+        parent::__construct($title, $author);
+    }
+    public function makeHTML() {
+        $buffer = array();
+        $buffer[] = "<html><head><title>".$this->title."</title></head>\n";
+        $buffer[] = "<body>";
+        $buffer[] = "<h1>".$this->title."</h1>\n";
+        $buffer[] = "<table width=\"80%\" border=\"3\">\n";
+        $it = new ArrayIterator($this->content);
+        while ($it->valid()) {
+            $item = $it->current();
+            $buffer[] = "<tr>".$item->makeHTML()."</tr>";
+            $it->next();
+        }
+        $buffer[] = "</table>";
+        $buffer[] = "<hr><address>".$this->author."</address>";
+        $buffer[] = "</body></html>\n";
+        return implode("", $buffer);
+    }
+}
