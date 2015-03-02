@@ -139,9 +139,9 @@ class Player {
 
 class Main {
     function __construct() {}
-    public static function main($seed1, $seed2) {
-        $player1 = new Player("Taro", new WinningStrategy($seed1));
-        $player2 = new Player("Hana", new WinningStrategy($seed2));
+    public static function main() {
+        $player1 = new Player("Taro", new WinningStrategy());
+        $player2 = new Player("Hana", new WinningStrategy());
         for ($i = 0; $i < 10000; $i++) {
             $nextHand1 = $player1->nextHand();
             $nextHand2 = $player2->nextHand();
