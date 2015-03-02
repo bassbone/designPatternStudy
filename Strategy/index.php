@@ -106,6 +106,14 @@ class ProbStrategy implements Strategy {
     }
 }
 
+class RandomStrategy implements Strategy {
+    function __construct() {}
+    public function nextHand() {
+        return Hand::getHand(rand(0, 2));
+    }
+    public function study($win) {}
+}
+
 class Player {
     private $name;
     private $strategy;
@@ -140,8 +148,8 @@ class Player {
 class Main {
     function __construct() {}
     public static function main() {
-        $player1 = new Player("Taro", new WinningStrategy());
-        $player2 = new Player("Hana", new WinningStrategy());
+        $player1 = new Player("Taro", new ProbStrategy());
+        $player2 = new Player("Hana", new RandomStrategy());
         for ($i = 0; $i < 10000; $i++) {
             $nextHand1 = $player1->nextHand();
             $nextHand2 = $player2->nextHand();
