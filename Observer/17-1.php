@@ -58,7 +58,7 @@ class IncrementalNumberGenerator extends NumberGenerator {
         $this->inc = $inc;
     }
     public function execute() {
-        for ($i = $this->min; $i <= $this->max; $i+= $this->inc) {
+        for ($i = $this->min; $i < $this->max; $i+= $this->inc) {
             $this->number = $i;
             $this->notifyObservers();
         }        
