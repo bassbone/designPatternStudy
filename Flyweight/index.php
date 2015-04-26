@@ -22,6 +22,7 @@ class BigChar {
             $fp = fopen($filename, 'r');
             while (!feof($fp)) {
                 $line = fgets($fp);
+                $line = str_replace('*', '#', $line);
                 $line = str_replace(' ', '-', $line);
                 $this->fontdata .= $line.'<br>';
             }
